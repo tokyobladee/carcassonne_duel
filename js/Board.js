@@ -77,7 +77,7 @@ export class Board {
             return shuffled.slice(0, count);
         };
 
-        // Розміщуємо міста (по одному на кожній стороні)
+        // Розміщуємо міста
         console.log('Placing city tiles...');
         const placeCities = () => {
             // Для кожної сторони вибираємо одну випадкову позицію для міста
@@ -87,39 +87,41 @@ export class Board {
             const leftCity = getRandomPositions(leftPositions, 1)[0];
 
             // Розміщуємо міста з правильними поворотами
-            // Верхня сторона: місто
+            // Верхня сторона: місто дивиться вниз
             this.cells[topCity[0]][topCity[1]] = {
-                type: 'CFRF',  // Місто-Поле-Дорога-Поле
-                rotation: 0,
+                type: 'CFRF',
+                rotation: 180,  // Повертаємо на 180°, щоб місто дивилось вниз
                 owner: null
             };
-            this.updateCell(topCity[0], topCity[1]);
 
-            // Права сторона: місто
+            // Права сторона: місто дивиться вліво
             this.cells[rightCity[0]][rightCity[1]] = {
-                type: 'FFCR',  // Поле-Поле-Місто-Дорога
-                rotation: 0,
+                type: 'CFRF',
+                rotation: 270,  // Повертаємо на 270°, щоб місто дивилось вліво
                 owner: null
             };
-            this.updateCell(rightCity[0], rightCity[1]);
 
-            // Нижня сторона: місто
+            // Нижня сторона: місто дивиться вгору
             this.cells[bottomCity[0]][bottomCity[1]] = {
-                type: 'FFCR',  // Поле-Поле-Місто-Дорога
-                rotation: 0,
+                type: 'CFRF',
+                rotation: 0,    // Без повороту, місто дивиться вгору
                 owner: null
             };
-            this.updateCell(bottomCity[0], bottomCity[1]);
 
-            // Ліва сторона: місто
+            // Ліва сторона: місто дивиться вправо
             this.cells[leftCity[0]][leftCity[1]] = {
-                type: 'FFCR',  // Поле-Поле-Місто-Дорога
-                rotation: 0,
+                type: 'CFRF',
+                rotation: 90,   // Повертаємо на 90°, щоб місто дивилось вправо
                 owner: null
             };
+
+            // Оновлюємо відображення міст
+            this.updateCell(topCity[0], topCity[1]);
+            this.updateCell(rightCity[0], rightCity[1]);
+            this.updateCell(bottomCity[0], bottomCity[1]);
             this.updateCell(leftCity[0], leftCity[1]);
 
-            // Видаляємо використані позиції з масивів
+            // Видаляємо використані позиції
             [topCity, rightCity, bottomCity, leftCity].forEach(pos => {
                 const arrays = [topPositions, rightPositions, bottomPositions, leftPositions];
                 arrays.forEach(arr => {
@@ -129,7 +131,7 @@ export class Board {
             });
         };
 
-        // Розміщуємо дороги (по дві на кожній стороні)
+        // Розміщуємо дороги
         console.log('Placing road tiles...');
         const placeRoads = () => {
             // Для кожної сторони вибираємо дві випадкові позиції для доріг
@@ -138,46 +140,41 @@ export class Board {
             const bottomRoads = getRandomPositions(bottomPositions, 2);
             const leftRoads = getRandomPositions(leftPositions, 2);
 
-            // Розміщуємо дороги
-            // Верхня сторона: дороги
+            // Верхня сторона: дороги дивляться вниз
             topRoads.forEach(pos => {
-                console.log(`Placing road tile at (${pos[0]}, ${pos[1]})`);
                 this.cells[pos[0]][pos[1]] = {
-                    type: 'FRRF',  // Поле-Дорога-Дорога-Поле
-                    rotation: 0,
+                    type: 'FRRF',
+                    rotation: 180,  // Повертаємо на 180°, щоб дорога йшла вниз
                     owner: null
                 };
                 this.updateCell(pos[0], pos[1]);
             });
 
-            // Права сторона: дороги
+            // Права сторона: дороги дивляться вліво
             rightRoads.forEach(pos => {
-                console.log(`Placing road tile at (${pos[0]}, ${pos[1]})`);
                 this.cells[pos[0]][pos[1]] = {
-                    type: 'FRRF',  // Поле-Дорога-Дорога-Поле
-                    rotation: 0,
+                    type: 'FRRF',
+                    rotation: 270,  // Повертаємо на 270°, щоб дорога йшла вліво
                     owner: null
                 };
                 this.updateCell(pos[0], pos[1]);
             });
 
-            // Нижня сторона: дороги
+            // Нижня сторона: дороги дивляться вгору
             bottomRoads.forEach(pos => {
-                console.log(`Placing road tile at (${pos[0]}, ${pos[1]})`);
                 this.cells[pos[0]][pos[1]] = {
-                    type: 'FRRF',  // Поле-Дорога-Дорога-Поле
-                    rotation: 0,
+                    type: 'FRRF',
+                    rotation: 0,    // Без повороту, дорога йде вгору
                     owner: null
                 };
                 this.updateCell(pos[0], pos[1]);
             });
 
-            // Ліва сторона: дороги
+            // Ліва сторона: дороги дивляться вправо
             leftRoads.forEach(pos => {
-                console.log(`Placing road tile at (${pos[0]}, ${pos[1]})`);
                 this.cells[pos[0]][pos[1]] = {
-                    type: 'FRRF',  // Поле-Дорога-Дорога-Поле
-                    rotation: 0,
+                    type: 'FRRF',
+                    rotation: 90,   // Повертаємо на 90°, щоб дорога йшла вправо
                     owner: null
                 };
                 this.updateCell(pos[0], pos[1]);
@@ -231,13 +228,11 @@ export class Board {
             let tileContainer = cell.querySelector('.tile-container');
             
             if (!tileContainer) {
-                console.warn('Tile container not found, creating a new one');
+                console.log('Creating new tile container');
                 tileContainer = document.createElement('div');
                 tileContainer.classList.add('tile-container');
                 cell.appendChild(tileContainer);
             }
-
-            console.log('Tile container:', tileContainer);
 
             // Очищаємо контейнер
             tileContainer.innerHTML = '';
@@ -245,32 +240,53 @@ export class Board {
             // Отримуємо зображення з кешу
             const cachedImg = this.tileManager.getTile(tile.type);
             if (cachedImg) {
-                // Клонуємо зображення з кешу
+                console.log('Using cached image');
                 const img = cachedImg.cloneNode(true);
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.transform = `rotate(${tile.rotation || 0}deg)`;
                 
-                // Додаємо img в контейнер
+                // Застосовуємо стилі напряму, як в превью тайлі
+                Object.assign(img.style, {
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    transform: `rotate(${tile.rotation || 0}deg)`,
+                    transition: 'transform 0.3s ease',
+                    display: 'block'
+                });
+                
                 tileContainer.appendChild(img);
-                
-                console.log('Cached tile image added:', img);
+                cell.classList.add('has-tile');
             } else {
-                console.warn(`Tile ${tile.type} not found in cache`);
-                // Створюємо новий елемент img як запасний варіант
+                console.log('Creating new image');
                 const img = document.createElement('img');
                 img.src = `assets/tiles/${tile.type}.svg`;
                 img.alt = tile.type;
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.transform = `rotate(${tile.rotation || 0}deg)`;
+                
+                // Застосовуємо ті ж самі стилі
+                Object.assign(img.style, {
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    transform: `rotate(${tile.rotation || 0}deg)`,
+                    transition: 'transform 0.3s ease',
+                    display: 'block'
+                });
+                
+                img.onload = () => {
+                    console.log('Image loaded successfully');
+                    cell.classList.add('has-tile');
+                };
+                
+                img.onerror = () => {
+                    console.error('Failed to load image');
+                };
+                
                 tileContainer.appendChild(img);
             }
 
-            cell.classList.add('has-tile');
-
-            if (tile.owner) {
-                cell.classList.add(tile.owner === 1 ? 'player1' : 'player2');
+            // Оновлюємо класи власника
+            if (tile.owner !== null) {
+                cell.classList.remove('player1', 'player2');
+                cell.classList.add(`player${tile.owner + 1}`);
             }
         } else {
             console.error('Invalid cell or tile:', { cell, tile });

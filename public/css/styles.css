@@ -5,8 +5,6 @@
     position: relative;
     box-sizing: border-box;
     background-color: rgba(52, 73, 94, 0.8); /* Темний фон для порожніх клітинок */
-    overflow: visible;
-    z-index: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,13 +17,15 @@
 }
 
 .tile-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
-    z-index: 1;
+    z-index: 2;
 }
 
 .tile-container img {
@@ -33,7 +33,7 @@
     height: 100%;
     object-fit: contain;
     pointer-events: none;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease;
 }
 
 #currentTile {
@@ -41,14 +41,19 @@
     height: 70px;
     border: 2px solid #333;
     margin: 10px auto;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transform-origin: center center;
-    transition: transform 0.3s ease;
     position: relative;
     z-index: 3;
+}
+
+#currentTile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
 }
 
 .current-tile {
@@ -80,6 +85,7 @@
     border: 2px solid #3498db;
 }
 
-.tile-container:empty {
+/* Видаляємо правило для empty, оскільки воно може заважати */
+/* .tile-container:empty {
     display: none;
-} 
+} */ 

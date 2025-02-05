@@ -51,24 +51,8 @@ export class TileStack {
                 rotation: 0
             };
             
-            // Оновлюємо відображення без анімації
-            const currentTileElement = document.getElementById('currentTile');
-            if (currentTileElement) {
-                // Спочатку прибираємо всі стилі та transition
-                currentTileElement.style.cssText = '';
-                currentTileElement.style.transition = 'none';
-                
-                // Застосовуємо нові стилі
-                requestAnimationFrame(() => {
-                    currentTileElement.style.backgroundImage = `url('assets/tiles/${this.currentTile.type}.svg')`;
-                    currentTileElement.style.transform = 'rotate(0deg)';
-                    
-                    // Повертаємо transition для наступних обертань
-                    requestAnimationFrame(() => {
-                        currentTileElement.style.transition = 'transform 0.3s ease';
-                    });
-                });
-            }
+            // Оновлюємо відображення
+            this.updateCurrentTileDisplay();
 
             // Оновлюємо лічильник тайлів
             const tilesLeftElement = document.getElementById('tilesLeft');
@@ -85,8 +69,8 @@ export class TileStack {
     rotateCurrentTile() {
         if (this.currentTile) {
             // Визначаємо новий кут повороту
-            const currentRotation = this.currentTile.rotation;
-            const newRotation = ((currentRotation + 90) % 360);
+            const currentRotation = this.currentTile.rotation || 0;
+            const newRotation = (currentRotation + 90) % 360;
             
             console.log(`Rotating from ${currentRotation}° to ${newRotation}°`);
             
@@ -96,7 +80,12 @@ export class TileStack {
             // Оновлюємо відображення
             const currentTileElement = document.getElementById('currentTile');
             if (currentTileElement) {
-                currentTileElement.style.transform = `rotate(${newRotation}deg)`;
+                const img = currentTileElement.querySelector('img');
+                if (img) {
+                    img.style.transform = `rotate(${newRotation}deg)`;
+                } else {
+                    console.error('Image element not found in currentTile');
+                }
             }
             
             console.log('Rotated tile to:', this.currentTile.rotation);
@@ -124,9 +113,10 @@ export class TileStack {
     }
 
     updateCurrentTileDisplay() {
+        console.log('Оновлення відображення поточного тайлу');
         const currentTileElement = document.getElementById('currentTile');
         if (!currentTileElement) {
-            console.error('Current tile element not found');
+            console.error('Елемент currentTile не знайдено');
             return;
         }
 
@@ -134,17 +124,37 @@ export class TileStack {
         currentTileElement.innerHTML = '';
         
         if (this.currentTile) {
+            console.log('Створення нового зображення для тайлу:', this.currentTile);
+            
             // Створюємо новий елемент img
             const img = document.createElement('img');
+            
+            // Встановлюємо атрибути та стилі
             img.src = `assets/tiles/${this.currentTile.type}.svg`;
             img.alt = this.currentTile.type;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.transform = `rotate(${this.currentTile.rotation || 0}deg)`;
-            img.style.transition = 'transform 0.3s';
+            
+            // Застосовуємо стилі напряму
+            Object.assign(img.style, {
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                transform: `rotate(${this.currentTile.rotation || 0}deg)`,
+                transition: 'transform 0.3s ease',
+                display: 'block'
+            });
+            
+            // Додаємо обробник для перевірки завантаження
+            img.onload = () => {
+                console.log('Зображення тайлу завантажено успішно');
+            };
+            
+            img.onerror = () => {
+                console.error('Помилка завантаження зображення тайлу');
+            };
             
             // Додаємо img в контейнер
             currentTileElement.appendChild(img);
+            console.log('Зображення тайлу додано до DOM');
         }
     }
 } 
