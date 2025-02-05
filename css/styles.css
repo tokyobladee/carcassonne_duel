@@ -1,13 +1,16 @@
+.cell-container {
+    width: 70px;
+    height: 70px;
+    position: relative;
+}
+
 .cell {
     width: 70px;
     height: 70px;
     border: 1px solid #ccc;
     position: relative;
     box-sizing: border-box;
-    background-color: rgba(52, 73, 94, 0.8); /* Темний фон для порожніх клітинок */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: rgba(52, 73, 94, 0.8);
     transition: all 0.3s ease;
 }
 
@@ -25,19 +28,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
-    background: transparent; /* Забезпечуємо прозорий фон */
 }
 
 .tile-container img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    pointer-events: none;
     transition: transform 0.3s ease;
-    position: relative; /* Додаємо позиціонування */
-    z-index: 2; /* Підвищуємо z-index */
-    background: transparent; /* Забезпечуємо прозорий фон */
 }
 
 #currentTile {
@@ -49,9 +46,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    position: relative;
-    z-index: 3;
-    background: transparent; /* Забезпечуємо прозорий фон */
 }
 
 #currentTile img {
@@ -59,7 +53,6 @@
     height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
-    background: transparent; /* Забезпечуємо прозорий фон */
 }
 
 .current-tile {
@@ -79,15 +72,11 @@
     transition: transform 0.3s;
 }
 
-.has-tile {
-    background-color: transparent !important; /* Примусово робимо фон прозорим */
-}
-
-.player1 {
+.player1 .tile-container {
     border: 2px solid #e74c3c;
 }
 
-.player2 {
+.player2 .tile-container {
     border: 2px solid #3498db;
 }
 

@@ -56,6 +56,10 @@ export class Board {
 
         for (let row = 0; row < BOARD_SIZE; row++) {
             for (let col = 0; col < BOARD_SIZE; col++) {
+                const cellContainer = document.createElement('div');
+                cellContainer.className = 'cell-container';
+                cellContainer.style.position = 'relative';
+                
                 const cell = document.createElement('div');
                 cell.className = 'cell';
                 cell.dataset.row = row;
@@ -63,9 +67,10 @@ export class Board {
                 
                 const tileContainer = document.createElement('div');
                 tileContainer.className = 'tile-container';
-                cell.appendChild(tileContainer);
                 
-                gameBoard.appendChild(cell);
+                cellContainer.appendChild(cell);
+                cellContainer.appendChild(tileContainer);
+                gameBoard.appendChild(cellContainer);
             }
         }
         console.log('Board elements created');
@@ -236,24 +241,9 @@ export class Board {
             return;
         }
         
-        if (!tile || !tile.type) {
-            console.log('Клітинка порожня');
-            cell.classList.remove('has-tile');
-            const tileContainer = cell.querySelector('.tile-container');
-            if (tileContainer) {
-                tileContainer.innerHTML = '';
-            }
-            return;
-        }
-        
-        // Одразу додаємо клас has-tile
-        cell.classList.add('has-tile');
-        
-        console.log('Дані тайлу:', tile);
-        
+        // Знаходимо або створюємо контейнер для тайлу
         let tileContainer = cell.querySelector('.tile-container');
         if (!tileContainer) {
-            console.log('Створюю новий контейнер для тайлу');
             tileContainer = document.createElement('div');
             tileContainer.className = 'tile-container';
             cell.appendChild(tileContainer);
@@ -262,21 +252,17 @@ export class Board {
         // Очищаємо контейнер
         tileContainer.innerHTML = '';
         
+        if (!tile || !tile.type) {
+            console.log('Клітинка порожня');
+            cell.classList.remove('player1', 'player2');
+            return;
+        }
+        
         // Створюємо новий елемент зображення
         const img = document.createElement('img');
         img.src = `assets/tiles/${tile.type}.svg`;
         img.alt = tile.type;
-        
-        // Застосовуємо стилі напряму до зображення
-        Object.assign(img.style, {
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            transform: `rotate(${tile.rotation || 0}deg)`,
-            transition: 'transform 0.3s ease',
-            display: 'block',
-            background: 'transparent'  // Додаємо прозорий фон
-        });
+        img.style.transform = `rotate(${tile.rotation || 0}deg)`;
         
         // Додаємо обробники подій
         img.onload = () => {
@@ -285,7 +271,6 @@ export class Board {
         
         img.onerror = () => {
             console.error(`Помилка завантаження зображення тайлу ${tile.type}`);
-            cell.classList.remove('has-tile');  // Прибираємо клас якщо помилка
         };
         
         // Додаємо зображення в контейнер
