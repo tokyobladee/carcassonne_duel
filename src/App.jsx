@@ -1,38 +1,25 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import GameBoard from './components/GameBoard'
-import TileStack from './components/TileStack'
-import ScoreBoard from './components/ScoreBoard'
+import Game from './components/Game'
 
 const AppContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
   min-height: 100vh;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  padding: 20px;
 `
 
-const GameContainer = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-top: 20px;
+const Title = styled.h1`
+  color: white;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
 `
 
 function App() {
-  const [currentPlayer, setCurrentPlayer] = useState(1)
-  const [scores, setScores] = useState({ player1: 0, player2: 0 })
-
   return (
     <AppContainer>
-      <h1>Каркасон Дуель</h1>
-      <GameContainer>
-        <TileStack />
-        <GameBoard />
-        <ScoreBoard 
-          currentPlayer={currentPlayer}
-          scores={scores}
-        />
-      </GameContainer>
+      <Title>Каркасон Дуель</Title>
+      <Game />
     </AppContainer>
   )
 }
