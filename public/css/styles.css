@@ -1,0 +1,85 @@
+.cell {
+    width: 70px;
+    height: 70px;
+    border: 1px solid #ccc;
+    position: relative;
+    box-sizing: border-box;
+    background-color: rgba(52, 73, 94, 0.8); /* Темний фон для порожніх клітинок */
+    overflow: visible;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.cell:hover {
+    background-color: rgba(52, 73, 94, 0.6);
+    cursor: pointer;
+}
+
+.tile-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    z-index: 1;
+}
+
+.tile-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    transition: transform 0.3s;
+}
+
+#currentTile {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #333;
+    margin: 10px auto;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transform-origin: center center;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 3;
+}
+
+.current-tile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.current-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.has-tile {
+    background-color: transparent; /* Прозорий фон для клітинок з тайлами */
+}
+
+.player1 {
+    border: 2px solid #e74c3c;
+}
+
+.player2 {
+    border: 2px solid #3498db;
+}
+
+.tile-container:empty {
+    display: none;
+} 

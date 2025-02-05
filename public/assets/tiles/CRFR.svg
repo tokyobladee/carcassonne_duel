@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+    <!-- Імпортуємо текстури -->
+    <defs>
+        <pattern id="fieldTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect width="20" height="20" fill="#7cb342"/>
+            <circle cx="5" cy="5" r="1" fill="#558b2f"/>
+            <circle cx="15" cy="15" r="1" fill="#558b2f"/>
+            <path d="M10,2 L12,6 L8,6 Z" fill="#558b2f"/>
+        </pattern>
+
+        <pattern id="cityTexture" width="30" height="30" patternUnits="userSpaceOnUse">
+            <rect width="30" height="30" fill="#8d6e63"/>
+            <rect x="0" y="0" width="15" height="15" fill="#6d4c41"/>
+            <rect x="15" y="15" width="15" height="15" fill="#6d4c41"/>
+            <path d="M0,0 L5,0 L5,10 L0,10 Z" fill="#4e342e"/>
+            <path d="M20,20 L25,20 L25,30 L20,30 Z" fill="#4e342e"/>
+        </pattern>
+
+        <pattern id="roadTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect width="20" height="20" fill="#bdbdbd"/>
+            <rect x="0" y="0" width="10" height="10" fill="#9e9e9e"/>
+            <rect x="10" y="10" width="10" height="10" fill="#9e9e9e"/>
+            <line x1="0" y1="0" x2="20" y2="20" stroke="#757575" stroke-width="1"/>
+            <line x1="20" y1="0" x2="0" y2="20" stroke="#757575" stroke-width="1"/>
+        </pattern>
+    </defs>
+
+    <!-- Фон поля -->
+    <rect width="100" height="100" fill="url(#fieldTexture)"/>
+
+    <!-- Верхнє місто -->
+    <path d="M15,0 h70 
+             C 90,0 90,5 90,5
+             C 90,20 90,25 50,35
+             C 10,25 10,20 10,5
+             C 10,5 10,0 15,0 Z" 
+          fill="url(#cityTexture)"/>
+
+    <!-- Дорога -->
+    <path d="M0,40 h35 
+             C 45,40 50,40 50,50
+             C 50,60 55,60 65,60
+             h35 v-20 h-35
+             C 55,40 50,40 50,50
+             C 50,60 45,60 35,60
+             h-35 Z" 
+          fill="url(#roadTexture)"/>
+
+    <!-- Обрамлення дороги -->
+    <path d="M0,40 h35 C 45,40 50,40 50,50 C 50,60 55,60 65,60 h35" 
+          stroke="#616161" stroke-width="2" fill="none"/>
+    <path d="M0,60 h35 C 45,60 50,60 50,50 C 50,40 55,40 65,40 h35" 
+          stroke="#616161" stroke-width="2" fill="none"/>
+
+    <!-- Обрамлення верхнього міста -->
+    <path d="M10,5 
+             C 10,20 10,25 50,35
+             C 90,25 90,20 90,5" 
+          stroke="#3e2723" stroke-width="3" fill="none"/>
+
+    <!-- Стіни верхнього міста -->
+    <path d="M20,0 v12 h10 v-7 h10 v7 h10 v-12" fill="#4e342e"/>
+    <path d="M70,0 v12 h10 v-7" fill="#4e342e"/>
+
+    <!-- Декоративні елементи верхнього міста -->
+    <rect x="35" y="10" width="10" height="10" fill="#4e342e"/>
+    <rect x="60" y="10" width="10" height="10" fill="#4e342e"/>
+    <circle cx="50" cy="15" r="3" fill="#4e342e"/>
+</svg> 

@@ -122,4 +122,29 @@ export class TileStack {
     isEmpty() {
         return this.tiles.length === 0;
     }
+
+    updateCurrentTileDisplay() {
+        const currentTileElement = document.getElementById('currentTile');
+        if (!currentTileElement) {
+            console.error('Current tile element not found');
+            return;
+        }
+
+        // Очищаємо контейнер
+        currentTileElement.innerHTML = '';
+        
+        if (this.currentTile) {
+            // Створюємо новий елемент img
+            const img = document.createElement('img');
+            img.src = `assets/tiles/${this.currentTile.type}.svg`;
+            img.alt = this.currentTile.type;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.transform = `rotate(${this.currentTile.rotation || 0}deg)`;
+            img.style.transition = 'transform 0.3s';
+            
+            // Додаємо img в контейнер
+            currentTileElement.appendChild(img);
+        }
+    }
 } 

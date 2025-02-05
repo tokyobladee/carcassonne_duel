@@ -1,5 +1,6 @@
 import { BOARD_SIZE, INITIAL_BOARD, LANDSCAPE, BORDER_TILES, BORDER_RULES, CORNERS } from './config.js';
 import { getTileSide, canPlaceTileNextTo } from './TileUtils.js';
+import { TileManager } from './TileManager.js';
 
 export class Board {
     constructor(scoreBoard) {
@@ -9,15 +10,25 @@ export class Board {
         }
         this.scoreBoard = scoreBoard;
         this.cells = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(null));
+        this.tileManager = new TileManager();
         
         try {
-            this.createBoardElements();
-            this.initializeBorders();
-            console.log('Board created successfully');
+            this.initialize();
         } catch (error) {
             console.error('Error creating board:', error);
             throw error;
         }
+    }
+
+    async initialize() {
+        // Спочатку завантажуємо всі тайли
+        await this.tileManager.preloadTiles();
+        console.log('Тайли завантажено, створюю елементи дошки...');
+        
+        // Потім створюємо дошку
+        this.createBoardElements();
+        this.initializeBorders();
+        console.log('Board created successfully');
     }
 
     createBoardElements() {
@@ -184,7 +195,7 @@ export class Board {
     }
 
     placeTile(row, col, type, rotation) {
-        console.log(`Placing tile at (${row}, ${col}) with type ${type} and rotation ${rotation}`);
+        console.log(`Placing tile ${type} at (${row}, ${col}) with rotation ${rotation}°`);
         
         if (this.isValidPlacement(row, col, type, rotation)) {
             this.cells[row][col] = {
@@ -193,23 +204,7 @@ export class Board {
                 owner: this.scoreBoard.currentPlayer
             };
             
-            console.log(`Tile placed in this.cells:`, this.cells[row][col]);
-            console.log('Current board state:', JSON.stringify(this.cells));
-            
-            // Перевіряємо сусідні клітинки після розміщення
-            const adjacentCells = [
-                { row: row - 1, col: col, direction: 'top' },
-                { row: row, col: col + 1, direction: 'right' },
-                { row: row + 1, col: col, direction: 'bottom' },
-                { row: row, col: col - 1, direction: 'left' }
-            ];
-            
-            console.log('Checking adjacent cells after placement:');
-            for (let cell of adjacentCells) {
-                if (this.isValidCell(cell.row, cell.col)) {
-                    console.log(`Adjacent cell at (${cell.row}, ${cell.col}):`, this.cells[cell.row][cell.col]);
-                }
-            }
+            console.log('Tile placed:', this.cells[row][col]);
             
             this.updateCell(row, col);
             
@@ -244,21 +239,33 @@ export class Board {
 
             console.log('Tile container:', tileContainer);
 
-            // Очищаємо попередні інлайнові стилі
-            tileContainer.style.cssText = '';
+            // Очищаємо контейнер
+            tileContainer.innerHTML = '';
             
-            // Застосовуємо інлайнові стилі
-            tileContainer.style.backgroundImage = `url('assets/tiles/${tile.type}.svg')`;
-            tileContainer.style.backgroundSize = '100% 100%';
-            tileContainer.style.backgroundPosition = 'center';
-            tileContainer.style.backgroundRepeat = 'no-repeat';
-            tileContainer.style.width = '100%';
-            tileContainer.style.height = '100%';
-            tileContainer.style.transform = `rotate(${tile.rotation || 0}deg)`;
-            tileContainer.style.opacity = '1';
-            tileContainer.style.visibility = 'visible';
-
-            console.log('Inline styles applied:', tileContainer.style.cssText);
+            // Отримуємо зображення з кешу
+            const cachedImg = this.tileManager.getTile(tile.type);
+            if (cachedImg) {
+                // Клонуємо зображення з кешу
+                const img = cachedImg.cloneNode(true);
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.transform = `rotate(${tile.rotation || 0}deg)`;
+                
+                // Додаємо img в контейнер
+                tileContainer.appendChild(img);
+                
+                console.log('Cached tile image added:', img);
+            } else {
+                console.warn(`Tile ${tile.type} not found in cache`);
+                // Створюємо новий елемент img як запасний варіант
+                const img = document.createElement('img');
+                img.src = `assets/tiles/${tile.type}.svg`;
+                img.alt = tile.type;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.transform = `rotate(${tile.rotation || 0}deg)`;
+                tileContainer.appendChild(img);
+            }
 
             cell.classList.add('has-tile');
 
@@ -295,48 +302,33 @@ export class Board {
     }
 
     isValidPlacement(row, col, tileType, rotation) {
-        console.log(`Checking placement at (${row}, ${col}) for tile ${tileType} with rotation ${rotation}`);
+        console.log(`Checking if placement is valid for tile ${tileType} at (${row}, ${col}) with rotation ${rotation}°`);
         
-        // Перевірка чи клітинка порожня
         if (!this.isEmptyCell(row, col)) {
             console.log('Cell is not empty');
             return false;
         }
-
-        // Перевірка сусідніх клітинок
+        
         const adjacentCells = [
-            { row: row - 1, col: col, direction: 'top' },    // Верхня
-            { row: row, col: col + 1, direction: 'right' },  // Права
-            { row: row + 1, col: col, direction: 'bottom' }, // Нижня
-            { row: row, col: col - 1, direction: 'left' }    // Ліва
+            { row: row - 1, col: col, direction: 'top' },
+            { row: row, col: col + 1, direction: 'right' },
+            { row: row + 1, col: col, direction: 'bottom' },
+            { row: row, col: col - 1, direction: 'left' }
         ];
-
-        let hasAdjacentTile = false;
-
+        
         for (let cell of adjacentCells) {
-            console.log(`Checking adjacent cell at (${cell.row}, ${cell.col})`);
             if (this.isValidCell(cell.row, cell.col)) {
                 const adjacentTile = this.cells[cell.row][cell.col];
-                console.log(`Adjacent tile:`, adjacentTile);
-                if (adjacentTile) {
-                    hasAdjacentTile = true;
-                    const isCompatible = canPlaceTileNextTo(tileType, rotation, adjacentTile.type, adjacentTile.rotation, cell.direction);
-                    console.log(`Checking compatibility with ${cell.direction} tile: ${isCompatible}`);
-                    console.log(`New tile: ${tileType} (rotation: ${rotation})`);
-                    console.log(`Adjacent tile: ${adjacentTile.type} (rotation: ${adjacentTile.rotation})`);
-                    if (!isCompatible) {
-                        console.log('Adjacent tile is not compatible');
+                if (adjacentTile !== null) {
+                    console.log(`Adjacent tile at (${cell.row}, ${cell.col}):`, adjacentTile);
+                    if (!canPlaceTileNextTo(tileType, rotation, adjacentTile.type, adjacentTile.rotation, cell.direction)) {
+                        console.log('Cannot place tile next to adjacent tile');
                         return false;
                     }
                 }
             }
         }
-
-        if (!hasAdjacentTile) {
-            console.log('No adjacent tiles found');
-            return false;
-        }
-
+        
         console.log('Placement is valid');
         return true;
     }

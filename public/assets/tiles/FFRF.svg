@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+    <!-- Імпортуємо текстури -->
+    <defs>
+        <pattern id="fieldTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect width="20" height="20" fill="#7cb342"/>
+            <circle cx="5" cy="5" r="1" fill="#558b2f"/>
+            <circle cx="15" cy="15" r="1" fill="#558b2f"/>
+            <path d="M10,2 L12,6 L8,6 Z" fill="#558b2f"/>
+        </pattern>
+
+        <pattern id="roadTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect width="20" height="20" fill="#bdbdbd"/>
+            <rect x="0" y="0" width="10" height="10" fill="#9e9e9e"/>
+            <rect x="10" y="10" width="10" height="10" fill="#9e9e9e"/>
+            <line x1="0" y1="0" x2="20" y2="20" stroke="#757575" stroke-width="1"/>
+            <line x1="20" y1="0" x2="0" y2="20" stroke="#757575" stroke-width="1"/>
+        </pattern>
+    </defs>
+
+    <!-- Фон поля -->
+    <rect width="100" height="100" fill="url(#fieldTexture)"/>
+
+    <!-- Дорога знизу -->
+    <path d="M40,100 v-35 
+             C 40,55 45,50 50,50
+             C 55,50 60,55 60,65
+             v35 h-20 Z" 
+          fill="url(#roadTexture)"/>
+
+    <!-- Обрамлення дороги -->
+    <path d="M40,100 v-35 C 40,55 45,50 50,50 C 55,50 60,55 60,65 v35" 
+          stroke="#616161" stroke-width="2" fill="none"/>
+
+    <!-- Додаткові елементи поля -->
+    <circle cx="25" cy="25" r="3" fill="#558b2f"/>
+    <circle cx="75" cy="35" r="3" fill="#558b2f"/>
+    <circle cx="35" cy="75" r="3" fill="#558b2f"/>
+    <circle cx="85" cy="65" r="3" fill="#558b2f"/>
+    <path d="M50,15 L55,20 L45,20 Z" fill="#558b2f"/>
+    <path d="M80,50 L85,55 L75,55 Z" fill="#558b2f"/>
+    <path d="M15,45 L20,50 L10,50 Z" fill="#558b2f"/>
+</svg> 

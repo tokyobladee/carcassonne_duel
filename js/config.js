@@ -1,4 +1,4 @@
-export const BOARD_SIZE = 10;
+const BOARD_SIZE = 10;
 
 // Типи ландшафту
 export const LANDSCAPE = {

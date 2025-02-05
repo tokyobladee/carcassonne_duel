@@ -4,31 +4,25 @@ import { ScoreBoard } from './ScoreBoard.js';
 
 export class Game {
     constructor() {
-        console.log('Creating game components...');
-        
-        try {
-            this.scoreBoard = new ScoreBoard();
-            console.log('ScoreBoard created');
-            
-            this.board = new Board(this.scoreBoard);
-            console.log('Board created');
-            
-            this.tileStack = new TileStack();
-            console.log('TileStack created');
-            
-            this.initializeGame();
-            this.bindEvents();
-            
-            console.log('Game initialization complete');
-        } catch (error) {
-            console.error('Error in Game constructor:', error);
-            throw error;
-        }
+        console.log('Initializing game...');
+        this.initializeGame();
     }
 
-    initializeGame() {
-        console.log('Initializing game...');
-        this.tileStack.drawNextTile();
+    async initializeGame() {
+        try {
+            this.scoreBoard = new ScoreBoard();
+            this.board = new Board(this.scoreBoard);
+            this.tileStack = new TileStack();
+            
+            // Чекаємо завершення ініціалізації дошки
+            await this.board.initialize();
+            
+            this.bindEvents();
+            console.log('Game initialized successfully');
+        } catch (error) {
+            console.error('Error initializing game:', error);
+            throw error;
+        }
     }
 
     bindEvents() {

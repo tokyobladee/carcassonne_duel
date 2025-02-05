@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+    <!-- Імпортуємо текстури -->
+    <defs>
+        <pattern id="fieldTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+            <rect width="20" height="20" fill="#7cb342"/>
+            <circle cx="5" cy="5" r="1" fill="#558b2f"/>
+            <circle cx="15" cy="15" r="1" fill="#558b2f"/>
+            <path d="M10,2 L12,6 L8,6 Z" fill="#558b2f"/>
+        </pattern>
+
+        <pattern id="cityTexture" width="30" height="30" patternUnits="userSpaceOnUse">
+            <rect width="30" height="30" fill="#8d6e63"/>
+            <rect x="0" y="0" width="15" height="15" fill="#6d4c41"/>
+            <rect x="15" y="15" width="15" height="15" fill="#6d4c41"/>
+            <path d="M0,0 L5,0 L5,10 L0,10 Z" fill="#4e342e"/>
+            <path d="M20,20 L25,20 L25,30 L20,30 Z" fill="#4e342e"/>
+        </pattern>
+    </defs>
+
+    <!-- Фон поля -->
+    <rect width="100" height="100" fill="url(#fieldTexture)"/>
+
+    <!-- Нижнє місто -->
+    <path d="M15,100 h70 
+             C 90,100 90,95 90,95
+             C 90,80 90,75 50,65
+             C 10,75 5,80 5,95
+             C 5,95 5,100 15,100 Z" 
+          fill="url(#cityTexture)"/>
+
+    <!-- Ліве місто -->
+    <path d="M0,15 v70 
+             C 0,90 5,90 5,90
+             C 20,90 25,90 35,50
+             C 25,10 20,10 5,10
+             C 5,5 5,5 5,5
+             C 5,5 0,10 0,15 Z" 
+          fill="url(#cityTexture)"/>
+
+    <!-- Обрамлення нижнього міста -->
+    <path d="M5,95 
+             C 5,80 10,75 50,65
+             C 90,75 90,80 90,95" 
+          stroke="#3e2723" stroke-width="3" fill="none"/>
+
+    <!-- Обрамлення лівого міста -->
+    <path d="M5,5
+             C 20,10 25,10 35,50
+             C 25,90 20,90 5,90" 
+          stroke="#3e2723" stroke-width="3" fill="none"/>
+
+    <!-- Стіни нижнього міста -->
+    <path d="M20,100 v-12 h10 v7 h10 v-7 h10 v12" fill="#4e342e"/>
+    <path d="M70,100 v-12 h10 v7" fill="#4e342e"/>
+
+    <!-- Стіни лівого міста -->
+    <path d="M0,20 h12 v10 h-7 v10 h7 v10 h-12" fill="#4e342e"/>
+    <path d="M0,70 h12 v10 h-7" fill="#4e342e"/>
+
+    <!-- Декоративні елементи нижнього міста -->
+    <rect x="35" y="80" width="10" height="10" fill="#4e342e"/>
+    <rect x="60" y="80" width="10" height="10" fill="#4e342e"/>
+    <circle cx="50" cy="85" r="3" fill="#4e342e"/>
+
+    <!-- Декоративні елементи лівого міста -->
+    <rect x="10" y="35" width="10" height="10" fill="#4e342e"/>
+    <rect x="10" y="60" width="10" height="10" fill="#4e342e"/>
+    <circle cx="15" cy="50" r="3" fill="#4e342e"/>
+
+    <!-- Додаткові елементи поля -->
+    <circle cx="75" cy="25" r="3" fill="#558b2f"/>
+    <path d="M50,15 L55,20 L45,20 Z" fill="#558b2f"/>
+    <path d="M80,50 L85,55 L75,55 Z" fill="#558b2f"/>
+</svg> 
