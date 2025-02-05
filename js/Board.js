@@ -21,14 +21,24 @@ export class Board {
     }
 
     async initialize() {
-        // Спочатку завантажуємо всі тайли
-        await this.tileManager.preloadTiles();
-        console.log('Тайли завантажено, створюю елементи дошки...');
+        console.log('Починаю ініціалізацію дошки...');
         
-        // Потім створюємо дошку
+        // Спочатку створюємо елементи дошки
         this.createBoardElements();
-        this.initializeBorders();
-        console.log('Board created successfully');
+        console.log('Елементи дошки створено');
+        
+        // Потім завантажуємо всі тайли
+        try {
+            await this.tileManager.preloadTiles();
+            console.log('Тайли завантажено успішно');
+            
+            // Тільки після завантаження тайлів ініціалізуємо границі
+            this.initializeBorders();
+            console.log('Границі дошки ініціалізовано');
+        } catch (error) {
+            console.error('Помилка при завантаженні тайлів:', error);
+            throw error;
+        }
     }
 
     createBoardElements() {
@@ -217,81 +227,77 @@ export class Board {
     }
 
     updateCell(row, col) {
-        console.log('=== Starting updateCell ===');
+        console.log(`Оновлюю клітинку [${row}, ${col}]`);
         const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-        console.log('Found cell:', cell);
-        
         const tile = this.cells[row][col];
-        console.log('Tile data:', tile);
         
-        if (cell && tile && tile.type) {
-            let tileContainer = cell.querySelector('.tile-container');
-            
-            if (!tileContainer) {
-                console.log('Creating new tile container');
-                tileContainer = document.createElement('div');
-                tileContainer.classList.add('tile-container');
-                cell.appendChild(tileContainer);
-            }
-
-            // Очищаємо контейнер
-            tileContainer.innerHTML = '';
-            
-            // Отримуємо зображення з кешу
-            const cachedImg = this.tileManager.getTile(tile.type);
-            if (cachedImg) {
-                console.log('Using cached image');
-                const img = cachedImg.cloneNode(true);
-                
-                // Застосовуємо стилі напряму, як в превью тайлі
-                Object.assign(img.style, {
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    transform: `rotate(${tile.rotation || 0}deg)`,
-                    transition: 'transform 0.3s ease',
-                    display: 'block'
-                });
-                
-                tileContainer.appendChild(img);
-                cell.classList.add('has-tile');
-            } else {
-                console.log('Creating new image');
-                const img = document.createElement('img');
-                img.src = `assets/tiles/${tile.type}.svg`;
-                img.alt = tile.type;
-                
-                // Застосовуємо ті ж самі стилі
-                Object.assign(img.style, {
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    transform: `rotate(${tile.rotation || 0}deg)`,
-                    transition: 'transform 0.3s ease',
-                    display: 'block'
-                });
-                
-                img.onload = () => {
-                    console.log('Image loaded successfully');
-                    cell.classList.add('has-tile');
-                };
-                
-                img.onerror = () => {
-                    console.error('Failed to load image');
-                };
-                
-                tileContainer.appendChild(img);
-            }
-
-            // Оновлюємо класи власника
-            if (tile.owner !== null) {
-                cell.classList.remove('player1', 'player2');
-                cell.classList.add(`player${tile.owner + 1}`);
-            }
-        } else {
-            console.error('Invalid cell or tile:', { cell, tile });
+        if (!cell) {
+            console.error('Клітинку не знайдено');
+            return;
         }
-        console.log('=== Finished updateCell ===');
+        
+        if (!tile || !tile.type) {
+            console.log('Клітинка порожня');
+            cell.classList.remove('has-tile');
+            const tileContainer = cell.querySelector('.tile-container');
+            if (tileContainer) {
+                tileContainer.innerHTML = '';
+            }
+            return;
+        }
+        
+        // Одразу додаємо клас has-tile
+        cell.classList.add('has-tile');
+        
+        console.log('Дані тайлу:', tile);
+        
+        let tileContainer = cell.querySelector('.tile-container');
+        if (!tileContainer) {
+            console.log('Створюю новий контейнер для тайлу');
+            tileContainer = document.createElement('div');
+            tileContainer.className = 'tile-container';
+            cell.appendChild(tileContainer);
+        }
+        
+        // Очищаємо контейнер
+        tileContainer.innerHTML = '';
+        
+        // Створюємо новий елемент зображення
+        const img = document.createElement('img');
+        img.src = `assets/tiles/${tile.type}.svg`;
+        img.alt = tile.type;
+        
+        // Застосовуємо стилі напряму до зображення
+        Object.assign(img.style, {
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            transform: `rotate(${tile.rotation || 0}deg)`,
+            transition: 'transform 0.3s ease',
+            display: 'block',
+            background: 'transparent'  // Додаємо прозорий фон
+        });
+        
+        // Додаємо обробники подій
+        img.onload = () => {
+            console.log(`Зображення тайлу ${tile.type} завантажено`);
+        };
+        
+        img.onerror = () => {
+            console.error(`Помилка завантаження зображення тайлу ${tile.type}`);
+            cell.classList.remove('has-tile');  // Прибираємо клас якщо помилка
+        };
+        
+        // Додаємо зображення в контейнер
+        tileContainer.appendChild(img);
+        
+        // Оновлюємо класи власника
+        if (tile.owner !== null) {
+            cell.classList.remove('player1', 'player2');
+            cell.classList.add(`player${tile.owner + 1}`);
+        }
+        
+        console.log('Клітинку оновлено успішно');
     }
 
     getValidPlacements(tile) {

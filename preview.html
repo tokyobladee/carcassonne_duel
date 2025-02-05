@@ -9,6 +9,9 @@
             gap: 20px;
             padding: 20px;
             background: #2c3e50;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
         .tile {
             width: 200px;
@@ -17,11 +20,19 @@
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .tile img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+        .tile-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #333;
         }
         .controls {
             position: fixed;
@@ -31,10 +42,20 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 1000;
         }
         button {
             margin: 5px;
-            padding: 5px 10px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
         }
     </style>
 </head>
@@ -42,18 +63,66 @@
     <div class="controls">
         <button onclick="rotateTiles(-90)">⟲ Rotate Left</button>
         <button onclick="rotateTiles(90)">⟳ Rotate Right</button>
+        <button onclick="resetRotation()">Reset Rotation</button>
     </div>
-    <div class="tile">
-        <img src="assets/tiles/CCRF.svg" alt="CCRF" id="tile1">
-    </div>
+
     <script>
+        // Конфігурація тайлів
+        const TILE_CONFIG = {
+            'CCRF': 4,
+            'CCFR': 4,
+            'CFRF': 11,
+            'CRRF': 9,
+            'CRFF': 9,
+            'FFCR': 4,
+            'FFRF': 4,
+            'FRRF': 9,
+            'FFCC': 4,
+            'RRFF': 6
+        };
+
         let rotation = 0;
+
+        // Створення елементів для всіх тайлів
+        function createTiles() {
+            const container = document.body;
+            
+            for (const [tileType, count] of Object.entries(TILE_CONFIG)) {
+                const tileDiv = document.createElement('div');
+                tileDiv.className = 'tile';
+                
+                const img = document.createElement('img');
+                img.src = `assets/tiles/${tileType}.svg`;
+                img.alt = tileType;
+                
+                const name = document.createElement('div');
+                name.className = 'tile-name';
+                name.textContent = `${tileType} (${count})`;
+                
+                tileDiv.appendChild(img);
+                tileDiv.appendChild(name);
+                container.appendChild(tileDiv);
+            }
+        }
+
+        // Функція обертання тайлів
         function rotateTiles(deg) {
             rotation = (rotation + deg) % 360;
             document.querySelectorAll('.tile img').forEach(img => {
                 img.style.transform = `rotate(${rotation}deg)`;
             });
         }
+
+        // Функція скидання обертання
+        function resetRotation() {
+            rotation = 0;
+            document.querySelectorAll('.tile img').forEach(img => {
+                img.style.transform = 'rotate(0deg)';
+            });
+        }
+
+        // Ініціалізація при завантаженні
+        window.onload = createTiles;
     </script>
 </body>
 </html> 
