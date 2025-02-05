@@ -68,7 +68,35 @@ const TileStack = ({ onTileSelect, onSkip, onUseJoker, disabled, needNewTile, cu
     const [currentTile, setCurrentTile] = useState(null);
     const [rotation, setRotation] = useState(0);
     const configRef = useRef(null);
-    const isInitializedRef = useRef(false);
+
+    const createNewDeck = useCallback((config) => {
+        console.log('TileStack: Creating new deck with config:', config);
+        const newDeck = [];
+        Object.entries(config).forEach(([code, count]) => {
+            for (let i = 0; i < count; i++) {
+                newDeck.push(code);
+            }
+        });
+        return newDeck.sort(() => Math.random() - 0.5);
+    }, []);
+
+    const initializeDeck = useCallback((config) => {
+        console.log('=== ІНІЦІАЛІЗАЦІЯ НОВОЇ КОЛОДИ ===');
+        const shuffledDeck = createNewDeck(config);
+        const firstTile = shuffledDeck.pop();
+        
+        console.log('TileStack: Initialized new deck:', {
+            totalTiles: shuffledDeck.length + 1,
+            firstTile,
+            remainingTiles: shuffledDeck.length
+        });
+        
+        setDeck(shuffledDeck);
+        setCurrentTile(firstTile);
+        setRotation(0);
+        configRef.current = JSON.stringify(config);
+        onTileSelect({ code: firstTile, rotation: 0, isNew: true });
+    }, [createNewDeck, onTileSelect]);
 
     const drawNextTile = useCallback(() => {
         if (!deck.length) {
@@ -90,52 +118,21 @@ const TileStack = ({ onTileSelect, onSkip, onUseJoker, disabled, needNewTile, cu
         onTileSelect({ code: drawnTile, rotation: 0, isNew: true });
     }, [deck, onTileSelect]);
 
-    const createNewDeck = useCallback((config) => {
-        const newDeck = [];
-        Object.entries(config).forEach(([code, count]) => {
-            for (let i = 0; i < count; i++) {
-                newDeck.push(code);
-            }
-        });
-        return newDeck.sort(() => Math.random() - 0.5);
-    }, []);
-
-    const initializeDeck = useCallback((config) => {
-        const configStr = JSON.stringify(config);
-        
-        // Пропускаємо ініціалізацію тільки якщо конфігурація не змінилася і це не нова гра
-        if (configRef.current === configStr && !forceNewGame) {
-            console.log('TileStack: Skipping initialization - same config and not a new game');
-            return;
-        }
-        
-        console.log('=== ІНІЦІАЛІЗАЦІЯ КОЛОДИ ===');
-        console.log('TileStack: Using deck configuration:', {
-            totalConfigured: Object.values(config).reduce((sum, count) => sum + count, 0),
-            configuration: config
-        });
-        
-        const shuffledDeck = createNewDeck(config);
-        const firstTile = shuffledDeck.pop();
-        
-        console.log('TileStack: Initialized new deck:', {
-            totalTiles: shuffledDeck.length + 1,
-            firstTile,
-            remainingTiles: shuffledDeck.length
-        });
-        
-        setDeck(shuffledDeck);
-        setCurrentTile(firstTile);
-        setRotation(0);
-        configRef.current = configStr;
-        isInitializedRef.current = true;
-        onTileSelect({ code: firstTile, rotation: 0, isNew: true });
-    }, [createNewDeck, onTileSelect, forceNewGame]);
-
-    // Єдиний ефект для керування колодою
+    // Ефект для нової гри
     useEffect(() => {
-        const config = customDeck || TILE_CONFIG;
-        initializeDeck(config);
+        if (forceNewGame) {
+            console.log('TileStack: Force new game detected, creating new deck');
+            const config = customDeck || TILE_CONFIG;
+            initializeDeck(config);
+        }
+    }, [forceNewGame, customDeck, initializeDeck]);
+
+    // Ефект для зміни колоди
+    useEffect(() => {
+        if (!forceNewGame && customDeck) {
+            console.log('TileStack: Custom deck changed, initializing new deck');
+            initializeDeck(customDeck);
+        }
     }, [customDeck, initializeDeck, forceNewGame]);
 
     // Ефект для витягування нового тайлу
