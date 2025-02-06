@@ -61,6 +61,7 @@ const Board = ({ board, currentTile, onTilePlacement, canPlaceTile }) => {
                                     <TileImage 
                                         code={cell.code}
                                         size={60}
+                                        player={cell.player}
                                     />
                                 </TileContainer>
                             )}

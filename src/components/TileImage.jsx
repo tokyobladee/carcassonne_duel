@@ -25,7 +25,7 @@ const TERRAIN_COLORS = {
     }
 };
 
-const TileImage = ({ code, rotation = 0, size = 100 }) => {
+const TileImage = ({ code, rotation = 0, size = 100, player }) => {
     // Розбиваємо код на сторони (TRBL: top, right, bottom, left)
     const [top, right, bottom, left] = code.split('');
 
@@ -87,13 +87,19 @@ const TileImage = ({ code, rotation = 0, size = 100 }) => {
         return connections;
     };
 
+    // Визначаємо колір підсвітки в залежності від гравця
+    const highlightColor = player === 1 ? '#3498db' : player === 2 ? '#e74c3c' : 'none';
+
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 100 100"
             width={size}
             height={size}
-            style={{ transform: `rotate(${rotation}deg)` }}
+            style={{ 
+                transform: `rotate(${rotation}deg)`,
+                border: player > 0 ? `2px solid ${highlightColor}` : 'none' // Модифікуємо логіку підсвітки
+            }}
         >
             <defs>
                 {createGradient(top, gradientIds.top)}
@@ -134,7 +140,8 @@ const TileImage = ({ code, rotation = 0, size = 100 }) => {
 TileImage.propTypes = {
     code: PropTypes.string.isRequired,
     rotation: PropTypes.number,
-    size: PropTypes.number
+    size: PropTypes.number,
+    player: PropTypes.number // Додаємо новий проп player
 };
 
 export default TileImage; 
