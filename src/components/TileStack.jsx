@@ -80,7 +80,7 @@ const TileStack = ({ onTileSelect, onSkip, onUseJoker, disabled, needNewTile, cu
         return newDeck.sort(() => Math.random() - 0.5);
     }, []);
 
-    const initializeDeck = useCallback((config) => {
+    const initializeNewDeck = useCallback((config) => {
         console.log('=== ІНІЦІАЛІЗАЦІЯ НОВОЇ КОЛОДИ ===');
         const shuffledDeck = createNewDeck(config);
         const firstTile = shuffledDeck.pop();
@@ -123,17 +123,18 @@ const TileStack = ({ onTileSelect, onSkip, onUseJoker, disabled, needNewTile, cu
         if (forceNewGame) {
             console.log('TileStack: Force new game detected, creating new deck');
             const config = customDeck || TILE_CONFIG;
-            initializeDeck(config);
+            setDeck([]); // Очищуємо стан колоди
+            initializeNewDeck(config);
         }
-    }, [forceNewGame, customDeck, initializeDeck]);
+    }, [forceNewGame, customDeck, initializeNewDeck]);
 
     // Ефект для зміни колоди
     useEffect(() => {
         if (!forceNewGame && customDeck) {
             console.log('TileStack: Custom deck changed, initializing new deck');
-            initializeDeck(customDeck);
+            initializeNewDeck(customDeck);
         }
-    }, [customDeck, initializeDeck, forceNewGame]);
+    }, [customDeck, initializeNewDeck, forceNewGame]);
 
     // Ефект для витягування нового тайлу
     useEffect(() => {

@@ -200,24 +200,14 @@ const Game = () => {
         
         if (deckConfig && deckConfig.preventDefault) {
             console.log('Game: Received event instead of deck config, using current custom deck');
-            if (customDeck) {
-                console.log('Game: Current custom deck state:', {
-                    totalTiles: Object.values(customDeck).reduce((sum, count) => sum + count, 0),
-                    configuration: customDeck
-                });
-            } else {
-                console.log('Game: No custom deck found, using default TILE_CONFIG');
-            }
             deckConfig = customDeck || TILE_CONFIG;
         }
         
-        if (deckConfig) {
-            console.log('Game: Setting new deck configuration:', {
-                totalTiles: Object.values(deckConfig).reduce((sum, count) => sum + count, 0),
-                configuration: deckConfig
-            });
-            setCustomDeck(deckConfig);
-        }
+        console.log('Game: Setting new deck configuration:', {
+            totalTiles: Object.values(deckConfig).reduce((sum, count) => sum + count, 0),
+            configuration: deckConfig
+        });
+        setCustomDeck(deckConfig);
         
         console.log('Game: Resetting game state');
         setBoard(placeInitialTiles());
@@ -228,7 +218,7 @@ const Game = () => {
         setJokers1(JOKERS_PER_PLAYER);
         setJokers2(JOKERS_PER_PLAYER);
         setGameOver(false);
-        setNeedNewTile(true);
+        setNeedNewTile(false);
         setForceNewGame(prev => prev + 1);
         console.log('=== КІНЕЦЬ ІНІЦІАЛІЗАЦІЇ НОВОЇ ГРИ ===');
     };
